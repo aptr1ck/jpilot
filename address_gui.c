@@ -1834,7 +1834,7 @@ static void cb_resort(GtkWidget *widget,
       gtk_clist_set_column_title(GTK_CLIST(clist), ADDRESS_NAME_COLUMN, _("First Name/Company"));
       break;
     case SORT_BY_COMPANY: 
-      gtk_clist_set_column_title(GTK_CLIST(clist), ADDRESS_NAME_COLUMN, _("Company/Last Name"));
+      gtk_clist_set_column_title(GTK_CLIST(clist), ADDRESS_NAME_COLUMN, _("Company/First Name"));
       break;
    }
 }
@@ -3243,8 +3243,8 @@ static void address_update_clist(GtkWidget *clist, GtkWidget *tooltip_widget,
       break;
     case SORT_BY_COMPANY:
       show1=contCompany;
-      show2=contLastname;
-      show3=contFirstname;
+      show2=contFirstname;
+      show3=contLastname;
       delim1 = slash;
       delim2 = comma_space;
       break;
@@ -3959,7 +3959,7 @@ int address_gui(GtkWidget *vbox, GtkWidget *hbox)
       gtk_clist_set_column_title(GTK_CLIST(clist), ADDRESS_NAME_COLUMN, _("First Name/Company"));
       break;
     case SORT_BY_COMPANY: 
-      gtk_clist_set_column_title(GTK_CLIST(clist), ADDRESS_NAME_COLUMN, _("Company/Last Name"));
+      gtk_clist_set_column_title(GTK_CLIST(clist), ADDRESS_NAME_COLUMN, _("Company/First Name"));
       break;
    }
    gtk_signal_connect(GTK_OBJECT(GTK_CLIST(clist)->column[ADDRESS_NAME_COLUMN].button),

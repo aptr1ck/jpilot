@@ -75,8 +75,8 @@ static int address_compare(const void *v1, const void *v2)
       break;
     case SORT_BY_COMPANY:
       sort_idx[1] = entryCompany;
-      sort_idx[2] = entryLastname;
-      sort_idx[3] = entryFirstname;
+      sort_idx[2] = entryFirstname;
+      sort_idx[3] = entryLastname;
       break;
    } 
 
