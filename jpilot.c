@@ -61,14 +61,21 @@
 
 #include "icons/jpilot-icon4.xpm"
 #include "icons/datebook.xpm"
+#include "icons/datebook_hidpi.xpm"
 #include "icons/address.xpm"
+#include "icons/address_hidpi.xpm"
 #include "icons/todo.xpm"
+#include "icons/todo_hidpi.xpm"
 #include "icons/memo.xpm"
+#include "icons/memo_hidpi.xpm"
 #include "icons/appl_menu_icons.h"
 #include "icons/lock_icons.h"
 #include "icons/sync.xpm"
+#include "icons/sync_hidpi.xpm"
 #include "icons/cancel_sync.xpm"
+#include "icons/cancel_sync_hidpi.xpm"
 #include "icons/backup.xpm"
+#include "icons/backup_hidpi.xpm"
 
 /********************************* Constants **********************************/
 #define OUTPUT_MINIMIZE 383
@@ -1530,6 +1537,9 @@ int main(int argc, char *argv[])
    long char_set;
    char *geometry_str=NULL;
    int iconify = 0;
+   float sclfact = 1.0;
+   GdkScreen* screen;
+   gint dpi = 96;
 #ifdef ENABLE_PLUGINS
    GList *plugin_list;
    GList *temp_list;
@@ -1796,6 +1806,10 @@ int main(int argc, char *argv[])
                            "title", title,
                            NULL);
 
+   /* Determine DPI for adjusting icon sizes */
+   screen = gtk_window_get_screen(GTK_WINDOW(window));
+   dpi = gdk_screen_get_resolution(screen);
+
    /* Set default size and position of main window */
    ret = 0;
    if (geometry_str) {
@@ -2008,9 +2022,16 @@ int main(int argc, char *argv[])
    gdk_window_set_icon_name(window->window, PN);
 
    /* Create "Datebook" pixmap */
-   pixmap = gdk_pixmap_create_from_xpm_d(window->window, &mask,
-                                         &style->bg[GTK_STATE_NORMAL],
-                                         datebook_xpm);
+   if (dpi >= 192) {
+      pixmap = gdk_pixmap_create_from_xpm_d(window->window, &mask,
+                                            &style->bg[GTK_STATE_NORMAL],
+                                            datebook_hidpi_xpm);
+   } else {
+      pixmap = gdk_pixmap_create_from_xpm_d(window->window, &mask,
+                                            &style->bg[GTK_STATE_NORMAL],
+                                            datebook_xpm);
+   }
+
 #ifdef __APPLE__
    mask = NULL;
 #endif
@@ -2020,9 +2041,16 @@ int main(int argc, char *argv[])
    gtk_button_set_relief(GTK_BUTTON(button_datebook), GTK_RELIEF_NONE);
 
    /* Create "Address" pixmap */
-   pixmap = gdk_pixmap_create_from_xpm_d(window->window, &mask,
-                                         &style->bg[GTK_STATE_NORMAL],
-                                         address_xpm);
+   if (dpi >= 192) {
+      pixmap = gdk_pixmap_create_from_xpm_d(window->window, &mask,
+                                            &style->bg[GTK_STATE_NORMAL],
+                                            address_hidpi_xpm);
+   } else {
+      pixmap = gdk_pixmap_create_from_xpm_d(window->window, &mask,
+                                            &style->bg[GTK_STATE_NORMAL],
+                                            address_xpm);
+   }
+
 #ifdef __APPLE__
    mask = NULL;
 #endif
@@ -2032,9 +2060,16 @@ int main(int argc, char *argv[])
    gtk_button_set_relief(GTK_BUTTON(button_address), GTK_RELIEF_NONE);
 
    /* Create "Todo" pixmap */
-   pixmap = gdk_pixmap_create_from_xpm_d(window->window, &mask,
-                                         &style->bg[GTK_STATE_NORMAL],
-                                         todo_xpm);
+   if (dpi >= 192) {
+      pixmap = gdk_pixmap_create_from_xpm_d(window->window, &mask,
+                                            &style->bg[GTK_STATE_NORMAL],
+                                            todo_hidpi_xpm);
+   } else {
+      pixmap = gdk_pixmap_create_from_xpm_d(window->window, &mask,
+                                            &style->bg[GTK_STATE_NORMAL],
+                                            todo_xpm);
+   }
+
 #ifdef __APPLE__
    mask = NULL;
 #endif
@@ -2044,9 +2079,16 @@ int main(int argc, char *argv[])
    gtk_button_set_relief(GTK_BUTTON(button_todo), GTK_RELIEF_NONE);
 
    /* Create "Memo" pixmap */
-   pixmap = gdk_pixmap_create_from_xpm_d(window->window, &mask,
-                                         &style->bg[GTK_STATE_NORMAL],
-                                         memo_xpm);
+   if (dpi >= 192) {
+      pixmap = gdk_pixmap_create_from_xpm_d(window->window, &mask,
+                                            &style->bg[GTK_STATE_NORMAL],
+                                            memo_hidpi_xpm);
+   } else {
+      pixmap = gdk_pixmap_create_from_xpm_d(window->window, &mask,
+                                            &style->bg[GTK_STATE_NORMAL],
+                                            memo_xpm);
+   }
+
 #ifdef __APPLE__
    mask = NULL;
 #endif
@@ -2067,9 +2109,16 @@ int main(int argc, char *argv[])
 #endif
 
    /* Create "locked" pixmap */
-   pixmap = gdk_pixmap_create_from_xpm_d(window->window, &mask,
-                                         &style->bg[GTK_STATE_NORMAL],
-                                         locked_xpm);
+   if (dpi >= 192) {
+      pixmap = gdk_pixmap_create_from_xpm_d(window->window, &mask,
+                                            &style->bg[GTK_STATE_NORMAL],
+                                            locked_hidpi_xpm);
+   } else {
+      pixmap = gdk_pixmap_create_from_xpm_d(window->window, &mask,
+                                            &style->bg[GTK_STATE_NORMAL],
+                                            locked_xpm);
+   }
+
 #ifdef __APPLE__
    mask = NULL;
 #endif
@@ -2078,9 +2127,16 @@ int main(int argc, char *argv[])
    gtk_container_add(GTK_CONTAINER(button_locked), pixmapwid);
 
    /* Create "masked" pixmap */
-   pixmap = gdk_pixmap_create_from_xpm_d(window->window, &mask,
-                                         &style->bg[GTK_STATE_NORMAL],
-                                         masklocked_xpm);
+   if (dpi >= 192) {
+      pixmap = gdk_pixmap_create_from_xpm_d(window->window, &mask,
+                                            &style->bg[GTK_STATE_NORMAL],
+                                            masklocked_hidpi_xpm);
+   } else {
+      pixmap = gdk_pixmap_create_from_xpm_d(window->window, &mask,
+                                            &style->bg[GTK_STATE_NORMAL],
+                                            masklocked_xpm);
+   }
+	
 #ifdef __APPLE__
    mask = NULL;
 #endif
@@ -2089,9 +2145,16 @@ int main(int argc, char *argv[])
    gtk_container_add(GTK_CONTAINER(button_masklocked), pixmapwid);
 
    /* Create "unlocked" pixmap */
-   pixmap = gdk_pixmap_create_from_xpm_d(window->window, &mask,
-                                         &style->bg[GTK_STATE_NORMAL],
-                                         unlocked_xpm);
+   if (dpi >= 192) {
+      pixmap = gdk_pixmap_create_from_xpm_d(window->window, &mask,
+                                            &style->bg[GTK_STATE_NORMAL],
+                                            unlocked_hidpi_xpm);
+   } else {
+      pixmap = gdk_pixmap_create_from_xpm_d(window->window, &mask,
+                                            &style->bg[GTK_STATE_NORMAL],
+                                            unlocked_xpm);
+   }
+
 #ifdef __APPLE__
    mask = NULL;
 #endif
@@ -2100,9 +2163,15 @@ int main(int argc, char *argv[])
    gtk_container_add(GTK_CONTAINER(button_unlocked), pixmapwid);
 
    /* Create "sync" pixmap */
-   pixmap = gdk_pixmap_create_from_xpm_d(window->window, &mask,
-                                         &style->bg[GTK_STATE_NORMAL],
-                                         sync_xpm);
+   if (dpi >= 192) {
+      pixmap = gdk_pixmap_create_from_xpm_d(window->window, &mask,
+                                            &style->bg[GTK_STATE_NORMAL],
+                                            sync_hidpi_xpm);
+   } else {
+      pixmap = gdk_pixmap_create_from_xpm_d(window->window, &mask,
+                                            &style->bg[GTK_STATE_NORMAL],
+                                            sync_xpm);
+   } 
 #ifdef __APPLE__
    mask = NULL;
 #endif
@@ -2113,9 +2182,16 @@ int main(int argc, char *argv[])
    /* Create "cancel sync" pixmap */
    /* Hide until sync process started */
    gtk_widget_hide(button_cancel_sync);
-   pixmap = gdk_pixmap_create_from_xpm_d(window->window, &mask,
-                                         &style->bg[GTK_STATE_NORMAL],
-                                         cancel_sync_xpm);
+   if (dpi >= 192) {
+      pixmap = gdk_pixmap_create_from_xpm_d(window->window, &mask,
+                                            &style->bg[GTK_STATE_NORMAL],
+                                            cancel_sync_hidpi_xpm);
+   } else {
+      pixmap = gdk_pixmap_create_from_xpm_d(window->window, &mask,
+                                            &style->bg[GTK_STATE_NORMAL],
+                                            cancel_sync_xpm);
+   }
+
 #ifdef __APPLE__
    mask = NULL;
 #endif
@@ -2125,9 +2201,16 @@ int main(int argc, char *argv[])
 
 
    /* Create "backup" pixmap */
-   pixmap = gdk_pixmap_create_from_xpm_d(window->window, &mask,
-                                         &style->bg[GTK_STATE_NORMAL],
-                                         backup_xpm);
+   if (dpi >= 192) {
+      pixmap = gdk_pixmap_create_from_xpm_d(window->window, &mask,
+                                            &style->bg[GTK_STATE_NORMAL],
+                                            backup_hidpi_xpm);
+   } else {
+      pixmap = gdk_pixmap_create_from_xpm_d(window->window, &mask,
+                                            &style->bg[GTK_STATE_NORMAL],
+                                            backup_xpm);
+   }
+
 #ifdef __APPLE__
    mask = NULL;
 #endif
