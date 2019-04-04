@@ -1,3 +1,10 @@
+1.8.3
+ Changed Contacts display from Company/Lastname to Company/Firstname
+ Code for scaling sidebar icons for high DPI screens.
+ Display tags in a separate column for todos - tags come from hashtags in todo's note.
+
+=== Start of customisation above this point
+
 1.8.2 - 05/18/14
  Many bug fixes
  Fixed VCard output

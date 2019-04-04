@@ -195,6 +195,7 @@ typedef struct {
    unsigned int unique_id;
    unsigned char attrib;
    struct ToDo todo;
+   char * tags;
 } MyToDo;
 
 typedef struct ToDoList_s {

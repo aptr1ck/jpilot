@@ -62,7 +62,7 @@
 #define DAT_TYPE_BITFLAG 7
 #define DAT_TYPE_REPEAT  8
 
-/* #define JPILOT_DEBUG */
+#define JPILOT_DEBUG
 
 /****************************** Prototypes ************************************/
 #ifdef JPILOT_DEBUG

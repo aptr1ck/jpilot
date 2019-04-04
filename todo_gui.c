@@ -1792,7 +1792,7 @@ void todo_update_clist(GtkWidget *clist, GtkWidget *tooltip_widget,
                        ToDoList **todo_list, int category, int main)
 {
    int num_entries, entries_shown;
-   gchar *empty_line[] = { "","","","","" };
+   gchar *empty_line[] = { "","","","","","" };
    GdkPixmap *pixmap_note;
    GdkPixmap *pixmap_check;
    GdkPixmap *pixmap_checked;
@@ -1809,6 +1809,11 @@ void todo_update_clist(GtkWidget *clist, GtkWidget *tooltip_widget,
    time_t ltime;
    struct tm *now, *due;
    int comp_now, comp_due;
+   // Variables for hashtags
+   char *searchStr, *found, *spaceFound, *newlineFound;
+   char tagName[12] = "";
+   long int tagLoc;
+   int endofline, tagLength, tagLocation, tagNum = 0;
 
    free_ToDoList(todo_list);
 
@@ -1866,6 +1871,7 @@ void todo_update_clist(GtkWidget *clist, GtkWidget *tooltip_widget,
          gtk_clist_set_text(GTK_CLIST(clist), entries_shown, TODO_PRIORITY_COLUMN, "---");
          gtk_clist_set_text(GTK_CLIST(clist), entries_shown, TODO_TEXT_COLUMN, "--------------------");
          gtk_clist_set_text(GTK_CLIST(clist), entries_shown, TODO_DATE_COLUMN, "----------");
+         gtk_clist_set_text(GTK_CLIST(clist), entries_shown, TODO_TAG_COLUMN, "----------");
          clear_mytodos(&temp_todo->mtodo);
          gtk_clist_set_row_data(GTK_CLIST(clist), entries_shown, &(temp_todo->mtodo));
          gtk_clist_set_row_style(GTK_CLIST(clist), entries_shown, NULL);
@@ -1916,7 +1922,54 @@ void todo_update_clist(GtkWidget *clist, GtkWidget *tooltip_widget,
       /* Put a note pixmap up */
       if (temp_todo->mtodo.todo.note[0]) {
          gtk_clist_set_pixmap(GTK_CLIST(clist), entries_shown, TODO_NOTE_COLUMN, pixmap_note, mask_note);
+         /* Search notes for hashtags */
+         sprintf(str, "");
+         searchStr = temp_todo->mtodo.todo.note;
+	 found = strchr(searchStr,'#');
+
+         while (found != NULL) {
+            // Process next tag
+            tagLength = 0;
+            tagNum++;
+            memset(tagName, 0, sizeof(tagName));
+            // Start location of the tag name
+            tagLoc = found-searchStr+1;
+            tagLocation = (int) tagLoc;
+            // Try to find a space at the end of the tag
+            spaceFound = strchr(found,' ');
+            // Try to find a new line at the end of the tag
+            newlineFound = strchr(found,'\n');
+            // Location of the end of the string, in case the tag is at the end
+            endofline = strlen(searchStr);
+            // Make tag length equal the number of characters from start of tag
+            // to end of string by default
+            tagLength = endofline - tagLocation;
+            // If we found a space, use that instead for the length
+            if (spaceFound != NULL) {
+                tagLength = spaceFound-searchStr - tagLocation;
+	    }
+            // If we found a new line, and it comes before the space,
+            // use that instead for the length
+            if (newlineFound != NULL) {
+		if ((newlineFound-found) < (spaceFound-searchStr)) {
+                    tagLength = newlineFound-found - tagLocation;
+                }
+            }
+	    // Copy the tag out of the string, into the tagName char array
+            memcpy( tagName, &searchStr[tagLocation], tagLength ); 
+
+            // Print tags into the CLIST field
+            if (tagNum > 1) {
+               strcat(str," ");
+            }
+            strcat(str,tagName);
+            gtk_clist_set_text(GTK_CLIST(clist), entries_shown, TODO_TAG_COLUMN, str);
+
+            // Set up for finding next tag
+            found = strchr(found+1,'#');
+         }
       } else {
+	 gtk_clist_set_text(GTK_CLIST(clist), entries_shown, TODO_TAG_COLUMN, "");
          gtk_clist_set_text(GTK_CLIST(clist), entries_shown, TODO_NOTE_COLUMN, "");
       }
 
@@ -2181,7 +2234,7 @@ int todo_gui(GtkWidget *vbox, GtkWidget *hbox)
    int i;
    GSList *group;
    long ivalue;
-   char *titles[]={"","","","",""};
+   char *titles[]={"","","","","",""};
    GtkAccelGroup *accel_group;
    long char_set;
    long show_tooltips;
@@ -2276,9 +2329,10 @@ int todo_gui(GtkWidget *vbox, GtkWidget *hbox)
                                   GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
    gtk_box_pack_start(GTK_BOX(vbox1), scrolled_window, TRUE, TRUE, 0);
 
-   clist = gtk_clist_new_with_titles(5, titles);
+   clist = gtk_clist_new_with_titles(6, titles);
    gtk_clist_set_column_title(GTK_CLIST(clist), TODO_TEXT_COLUMN, _("Task"));
    gtk_clist_set_column_title(GTK_CLIST(clist), TODO_DATE_COLUMN, _("Due"));
+   gtk_clist_set_column_title(GTK_CLIST(clist), TODO_TAG_COLUMN, _("Tags"));
    /* Put pretty pictures in the clist column headings */
    get_pixmaps(vbox, PIXMAP_NOTE, &pixmap, &mask);
 #ifdef __APPLE__
@@ -2287,6 +2341,7 @@ int todo_gui(GtkWidget *vbox, GtkWidget *hbox)
    pixmapwid = gtk_pixmap_new(pixmap, mask);
    gtk_clist_set_column_widget(GTK_CLIST(clist), TODO_NOTE_COLUMN, pixmapwid);
    gtk_clist_set_column_justification(GTK_CLIST(clist), TODO_NOTE_COLUMN, GTK_JUSTIFY_CENTER);
+   gtk_clist_set_column_justification(GTK_CLIST(clist), TODO_TAG_COLUMN, GTK_JUSTIFY_RIGHT);
 
    get_pixmaps(vbox, PIXMAP_BOX_CHECKED, &pixmap, &mask);
 #ifdef __APPLE__
@@ -2309,7 +2364,11 @@ int todo_gui(GtkWidget *vbox, GtkWidget *hbox)
    gtk_clist_set_column_auto_resize(GTK_CLIST(clist), TODO_PRIORITY_COLUMN, TRUE);
    gtk_clist_set_column_auto_resize(GTK_CLIST(clist), TODO_NOTE_COLUMN, TRUE);
    gtk_clist_set_column_auto_resize(GTK_CLIST(clist), TODO_DATE_COLUMN, TRUE);
-   gtk_clist_set_column_auto_resize(GTK_CLIST(clist), TODO_TEXT_COLUMN, FALSE);
+   gtk_clist_set_column_auto_resize(GTK_CLIST(clist), TODO_TEXT_COLUMN, TRUE);
+   gtk_clist_set_column_resizeable(GTK_CLIST(clist), TODO_TEXT_COLUMN, TRUE);
+   gtk_clist_set_column_width(GTK_CLIST(clist), TODO_TEXT_COLUMN, 600);
+   gtk_clist_set_column_auto_resize(GTK_CLIST(clist), TODO_TAG_COLUMN, FALSE);
+   gtk_clist_set_column_resizeable(GTK_CLIST(clist), TODO_TAG_COLUMN, TRUE);
 
    /* Restore previous sorting configuration */
    get_pref(PREF_TODO_SORT_COLUMN, &ivalue, NULL);

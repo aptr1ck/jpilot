@@ -32,6 +32,7 @@
 #define TODO_NOTE_COLUMN      2
 #define TODO_DATE_COLUMN      3
 #define TODO_TEXT_COLUMN      4
+#define TODO_TAG_COLUMN       5
 
 void free_ToDoList(ToDoList **todo);
 int get_todos(ToDoList **todo_list, int sort_order);
