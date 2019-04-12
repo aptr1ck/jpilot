@@ -45,3 +45,5 @@ SlackBuild
 stamp-h1
 po/*.po
 m4/*
+
+*.vscode*

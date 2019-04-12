@@ -1925,7 +1925,7 @@ void todo_update_clist(GtkWidget *clist, GtkWidget *tooltip_widget,
          /* Search notes for hashtags */
          sprintf(str, "");
          searchStr = temp_todo->mtodo.todo.note;
-	 found = strchr(searchStr,'#');
+	      found = strchr(searchStr,'#');
 
          while (found != NULL) {
             // Process next tag
@@ -1947,23 +1947,28 @@ void todo_update_clist(GtkWidget *clist, GtkWidget *tooltip_widget,
             // If we found a space, use that instead for the length
             if (spaceFound != NULL) {
                 tagLength = spaceFound-searchStr - tagLocation;
-	    }
+	         }
             // If we found a new line, and it comes before the space,
             // use that instead for the length
             if (newlineFound != NULL) {
-		if ((newlineFound-found) < (spaceFound-searchStr)) {
-                    tagLength = newlineFound-found - tagLocation;
-                }
+		         if ((newlineFound-found) < (spaceFound-found)) {
+                    tagLength = newlineFound-searchStr - tagLocation;
+               }
             }
-	    // Copy the tag out of the string, into the tagName char array
-            memcpy( tagName, &searchStr[tagLocation], tagLength ); 
+	         // Copy the tag out of the string, into the tagName char array
+            // Do one last sanity check
+            if (tagLength > 0) {
+               memcpy( tagName, &searchStr[tagLocation], tagLength ); 
 
-            // Print tags into the CLIST field
-            if (tagNum > 1) {
-               strcat(str," ");
+               // Print tags into the CLIST field
+               if (tagNum > 1) {
+                  strcat(str," ");
+               }
+               strcat(str,tagName);
+               gtk_clist_set_text(GTK_CLIST(clist), entries_shown, TODO_TAG_COLUMN, str);
+            } else {
+               tagNum--;
             }
-            strcat(str,tagName);
-            gtk_clist_set_text(GTK_CLIST(clist), entries_shown, TODO_TAG_COLUMN, str);
 
             // Set up for finding next tag
             found = strchr(found+1,'#');
